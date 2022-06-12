@@ -1,0 +1,35 @@
+# HEADER
+
+# ABOUT SOURCES
+
+# DESCRIPTION
+
+# IMPLEMENTING
+
+# USAGE
+
+# EXAMPLES
+## - QUALITY
+## - ALPHA VALUES
+## - INTERVAL
+## - DIVIDER
+## - NUMBER OF ELEMENTS
+## - FRACTIONS
+## - GAP
+## - PARTITIONING
+## - ASPECT RATIO
+## - CYLON ANIMATION
+###   - OVAL
+###   - RECTANGLE
+## - KITT ANIMATION
+###     - OVAL
+###     - RECTANGLE
+## - USE GRADIENTS
+## - USE DIVIDER
+## - EYE COLOURS
+## - SCANNER BACKGROUND
+## - EYE BACKGROUND
+
+# PLAYGROUND
+
+class allowing for playing around n stuff is in `misc/Playground.java`
