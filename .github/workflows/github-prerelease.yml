@@ -82,8 +82,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/VersionChecker-${{steps.tag.outputs.tag}}.jar
-          asset_name: VersionChecker-${{steps.tag.outputs.tag}}.jar
+          asset_path: ./build/libs/LarsonScanner-${{steps.tag.outputs.tag}}.jar
+          asset_name: LarsonScanner-${{steps.tag.outputs.tag}}.jar
           asset_content_type: application/jar
 
       - name: Upload Release Asset Sources Jar
@@ -93,8 +93,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/VersionChecker-${{steps.tag.outputs.tag}}-sources.jar
-          asset_name: VersionChecker-${{steps.tag.outputs.tag}}-sources.jar
+          asset_path: ./build/libs/LarsonScanner-${{steps.tag.outputs.tag}}-sources.jar
+          asset_name: LarsonScanner-${{steps.tag.outputs.tag}}-sources.jar
           asset_content_type: application/jar
 
       - name: Upload Release Asset Javadoc Jar
@@ -104,8 +104,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./build/libs/VersionChecker-${{steps.tag.outputs.tag}}-javadoc.jar
-          asset_name: VersionChecker-${{steps.tag.outputs.tag}}-javadoc.jar
+          asset_path: ./build/libs/LarsonScanner-${{steps.tag.outputs.tag}}-javadoc.jar
+          asset_name: LarsonScanner-${{steps.tag.outputs.tag}}-javadoc.jar
           asset_content_type: application/jar
 
       - name: Get current date

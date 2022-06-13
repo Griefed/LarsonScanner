@@ -34,9 +34,25 @@ This Larson Scanner lets you customize just about everything though! To get an i
 
 # Implementation
 
+`$VERSION` is the version of LarsonScanner you want to use in you project.
+
+LarsonScanner was written using Java 8.
+
 ## Using Gradle
 
+```groovy
+implementation 'de.griefed:larsonscanner:$VERSION'
+```
+
 ## Using Maven
+
+```xml
+<dependency>
+  <groupId>de.griefed</groupId>
+  <artifactId>larsonscanner</artifactId>
+  <version>$VERSION</version>
+</dependency>
+```
 
 ## Usage
 
