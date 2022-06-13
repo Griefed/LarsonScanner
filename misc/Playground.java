@@ -1,5 +1,3 @@
-package de.griefed.larsonscanner;
-
 import de.griefed.larsonscanner.LarsonScanner.ScannerConfig;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -36,11 +34,11 @@ public class Playground {
                 String[] alphaValues = alphasField.getText().split(",");
                 larsonScanner.setAlphas(
                     new short[] {
-                      new Short(alphaValues[0]),
-                      new Short(alphaValues[1]),
-                      new Short(alphaValues[2]),
-                      new Short(alphaValues[3]),
-                      new Short(alphaValues[4])
+                        new Short(alphaValues[0]),
+                        new Short(alphaValues[1]),
+                        new Short(alphaValues[2]),
+                        new Short(alphaValues[3]),
+                        new Short(alphaValues[4])
                     });
               });
           alphaPanel.add(alphasLabel);
@@ -212,12 +210,12 @@ public class Playground {
           JPanel toggles = new JPanel(true);
           toggles.setLayout(new BoxLayout(toggles, BoxLayout.X_AXIS));
           JButton startStop = new JButton("Start/Stop");
-          startStop.addActionListener(e -> larsonScanner.toggleOnOff());
+          startStop.addActionListener(e -> larsonScanner.togglePauseUnpause());
           JButton toggleShape = new JButton("Toggle Shape");
           toggleShape.addActionListener(e -> larsonScanner.toggleShape());
           JButton toggleAspectRatioForce = new JButton("Toggle aspect ratio");
           toggleAspectRatioForce.addActionListener(
-              e -> larsonScanner.forceAspectRatio(!larsonScanner.isAspectRationForced()));
+              e -> larsonScanner.forceAspectRatio(!larsonScanner.isAspectRatioForced()));
           JButton toggleGradient = new JButton("Toggle Gradient");
           toggleGradient.addActionListener(e -> larsonScanner.toggleGradient());
           JButton toggleDivider = new JButton("Toggle Divider");
@@ -264,7 +262,7 @@ public class Playground {
           frame.pack();
           frame.setVisible(true);
 
-          larsonScanner.start();
+          larsonScanner.play();
         });
   }
 

@@ -9,7 +9,6 @@ import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.jetbrains.annotations.Contract;
@@ -635,7 +634,6 @@ public class LarsonScanner extends JPanel {
           "Interval must be greater than 0. Specified " + updateInterval);
     } else {
       EYE.interval = updateInterval;
-      // eye.timer.setDelay(updateInterval);
     }
   }
 
@@ -1487,7 +1485,6 @@ public class LarsonScanner extends JPanel {
 
     private final RenderingHints renderingHints =
         new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-    // private final Timer timer;
     private final float[] fractions = {0.4f, 1.0f};
     private volatile boolean paused = true;
     private Color[] eyeColours = {
@@ -1635,7 +1632,6 @@ public class LarsonScanner extends JPanel {
 
       g2d.setColor(this.getBackground());
       g2d.fillRect(0, 0, (int) width, (int) height);
-      //g2d.drawRect(0, 0, (int) width, (int) height);
 
       if (ovalShaped) {
 
@@ -1809,10 +1805,9 @@ public class LarsonScanner extends JPanel {
      * <p>If a change in width or height was detected, the size of the eye, the partitioning and the
      * element width are updated.
      *
-     * @return {@link Boolean} <code>true</code> if anything was updated.
      * @author Griefed
      */
-    private boolean updateValues() {
+    private void updateValues() {
       boolean updated = false;
 
       if (forceAspectRatio) {
@@ -1844,8 +1839,6 @@ public class LarsonScanner extends JPanel {
 
         setNewEyeValues();
       }
-
-      return updated;
     }
 
     /**
@@ -1924,8 +1917,8 @@ public class LarsonScanner extends JPanel {
      *
      * <p>The element width multiplied with the number of elements, then divided by two, gives the
      * half of the total width of the eye itself. Added to that the width of one element, multiplied
-     * with the number of the current element being drawn in the eye, and we get the play of the
-     * eye we are currently drawing. To put this into relation along the width of the whole Larson
+     * with the number of the current element being drawn in the eye, and we get the play of the eye
+     * we are currently drawing. To put this into relation along the width of the whole Larson
      * Scanner, we need to subtract that value from the current position along the Larson Scanners
      * total width.
      *
@@ -2404,8 +2397,8 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Calculate the play of a Kitt-style animated rectangle. When the element we are drawing is
-     * the very first element, the play of said rectangle is simply the current position along the
+     * Calculate the play of a Kitt-style animated rectangle. When the element we are drawing is the
+     * very first element, the play of said rectangle is simply the current position along the
      * X-axis. Otherwise, when we are scrolling
      *
      * <p><strong>left to right</strong>
@@ -2585,7 +2578,6 @@ public class LarsonScanner extends JPanel {
           // right to left
 
           p -= width / divider;
-
         }
 
       } else {
@@ -2599,7 +2591,6 @@ public class LarsonScanner extends JPanel {
           // right to left
 
           p--;
-
         }
       }
     }
@@ -2645,7 +2636,6 @@ public class LarsonScanner extends JPanel {
           // right to left
 
           p -= maxWidth / divider;
-
         }
 
       } else {
@@ -2659,7 +2649,6 @@ public class LarsonScanner extends JPanel {
           // right to left
 
           p--;
-
         }
       }
     }
