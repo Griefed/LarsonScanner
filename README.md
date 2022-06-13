@@ -40,12 +40,24 @@ This Larson Scanner lets you customize just about everything though! To get an i
 
 ## Usage
 
-The quickest way is to create a new instance of LarsonScanner with the default values
+The quickest way is to create a new instance of LarsonScanner with the default values and just add
+it the the element you want to display it in.
 ```java
 LarsonScanner larsonScanner = new LarsonScanner();
+
+JFrame frame = new JFrame();
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setPreferredSize(new Dimension(width, 182));
+frame.setSize(new Dimension(width, 182));
+frame.add(larsonScanner);
+frame.setLocationRelativeTo(null);
+frame.pack();
+frame.setVisible(true);
+
+larsonScanner.play();
 ```
 
-LarsonScanner comes as a `JPanel`, so you can immediately add it to your GUI.
+LarsonScanner comes as a `JPanel`, so you can immediately add it to your Java Swing GUI.
 
 # Examples
 

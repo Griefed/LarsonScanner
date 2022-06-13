@@ -168,8 +168,8 @@ publishing {
             header(HttpHeaderAuthentication)
         }
     }
-    /*maven {
-        url = "https://gitlab.com/api/v4/projects/33364648/packages/maven"
+    maven {
+        url = "https://gitlab.com/api/v4/projects/36995385/packages/maven"
         credentials(HttpHeaderCredentials) {
             name = "Private-Token"
             value = System.getenv("GITLABCOM_TOKEN")
@@ -177,7 +177,7 @@ publishing {
         authentication {
             header(HttpHeaderAuthentication)
         }
-    }*/
+    }
     maven {
       name = "OSSRH"
       url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"

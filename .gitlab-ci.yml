@@ -98,20 +98,20 @@ Gradle Test:
       - build/reports/tests/test
     expire_in: 1 week
 
-#Generate Release:
-#  stage: Release
-#  needs:
-#    - job: Gradle Test
-#      artifacts: false
-#    - job: secret_detection
-#      artifacts: false
-#  image: ghcr.io/griefed/gitlab-ci-cd:2.0.6
-#  script:
-#    - npx semantic-release
-#  rules:
-#    - if: '$CI_COMMIT_BRANCH == "alpha" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
-#    - if: '$CI_COMMIT_BRANCH == "beta" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
-#    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
+Generate Release:
+  stage: Release
+  needs:
+    - job: Gradle Test
+      artifacts: false
+    - job: secret_detection
+      artifacts: false
+  image: ghcr.io/griefed/gitlab-ci-cd:2.0.6
+  script:
+    - npx semantic-release
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "alpha" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
+    - if: '$CI_COMMIT_BRANCH == "beta" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
+    - if: '$CI_COMMIT_BRANCH == "main" && $CI_COMMIT_TITLE !~ /^RELEASE:.+$/ && $CI_SERVER_HOST == "git.griefed.de"'
 
 Build Release:
   stage: Build Release
