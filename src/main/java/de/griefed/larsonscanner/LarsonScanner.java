@@ -12,7 +12,6 @@ import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.Timer;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,7 +39,8 @@ public class LarsonScanner extends JPanel {
 
   private static final Color DEFAULT_BACKGROUND_COLOUR = new Color(0, 0, 0);
   private static final Color DEFAULT_EYE_COLOUR = new Color(255, 0, 0);
-  private final Eye eye;
+  private final Thread ANIMATOR_THREAD;
+  private final Eye EYE;
 
   /**
    * Create a Larson Scanner with default settings.
@@ -70,8 +70,11 @@ public class LarsonScanner extends JPanel {
     setLayout(new BorderLayout());
     setBackground(DEFAULT_BACKGROUND_COLOUR);
 
-    eye = new Eye();
-    add(eye, BorderLayout.CENTER);
+    EYE = new Eye();
+    add(EYE, BorderLayout.CENTER);
+
+    ANIMATOR_THREAD = new Thread(EYE, "animation");
+    ANIMATOR_THREAD.start();
   }
 
   /**
@@ -87,8 +90,11 @@ public class LarsonScanner extends JPanel {
     setLayout(new BorderLayout());
     setBackground(DEFAULT_BACKGROUND_COLOUR);
 
-    eye = new Eye(updateInterval);
-    add(eye, BorderLayout.CENTER);
+    EYE = new Eye(updateInterval);
+    add(EYE, BorderLayout.CENTER);
+
+    ANIMATOR_THREAD = new Thread(EYE, "LarsonScanner Eye");
+    ANIMATOR_THREAD.start();
   }
 
   /**
@@ -106,8 +112,11 @@ public class LarsonScanner extends JPanel {
     setLayout(new BorderLayout());
     setBackground(backgroundColor);
 
-    eye = new Eye(interval, backgroundColor);
-    add(eye, BorderLayout.CENTER);
+    EYE = new Eye(interval, backgroundColor);
+    add(EYE, BorderLayout.CENTER);
+
+    ANIMATOR_THREAD = new Thread(EYE, "LarsonScanner Eye");
+    ANIMATOR_THREAD.start();
   }
 
   /**
@@ -126,8 +135,11 @@ public class LarsonScanner extends JPanel {
     setLayout(new BorderLayout());
     setBackground(backgroundColor);
 
-    eye = new Eye(interval, backgroundColor, eyeColor);
-    add(eye, BorderLayout.CENTER);
+    EYE = new Eye(interval, backgroundColor, eyeColor);
+    add(EYE, BorderLayout.CENTER);
+
+    ANIMATOR_THREAD = new Thread(EYE, "LarsonScanner Eye");
+    ANIMATOR_THREAD.start();
   }
 
   /**
@@ -137,7 +149,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public byte getNumberOfElements() {
-    return eye.numberOfElements;
+    return EYE.numberOfElements;
   }
 
   /**
@@ -161,18 +173,18 @@ public class LarsonScanner extends JPanel {
 
     } else {
 
-      stop();
+      pause();
 
-      eye.numberOfElements = amount;
+      EYE.numberOfElements = amount;
       Color[] newColours = new Color[amount];
       for (int i = 0; i < amount; i++) {
-        if (i < eye.eyeColours.length) {
-          newColours[i] = eye.eyeColours[i];
+        if (i < EYE.eyeColours.length) {
+          newColours[i] = EYE.eyeColours[i];
         } else {
           newColours[i] = DEFAULT_EYE_COLOUR;
         }
       }
-      eye.eyeColours = newColours;
+      EYE.eyeColours = newColours;
 
       short[] newAlphas = new short[amount];
       int median = (amount + 1) / 2;
@@ -190,9 +202,9 @@ public class LarsonScanner extends JPanel {
           newAlphas[i] = (short) ((amount - i) * 255 / median);
         }
       }
-      eye.alphas = newAlphas;
+      EYE.alphas = newAlphas;
 
-      start();
+      play();
     }
   }
 
@@ -205,7 +217,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setEyeColour(@NotNull Color color) {
-    eye.setEyeColour(color);
+    EYE.setEyeColour(color);
   }
 
   /**
@@ -216,7 +228,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public Color[] getEyeColours() {
-    return eye.eyeColours;
+    return EYE.eyeColours;
   }
 
   /**
@@ -232,14 +244,14 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setEyeColours(@NotNull Color @NotNull [] colours) throws IllegalArgumentException {
-    if (colours.length != eye.numberOfElements) {
+    if (colours.length != EYE.numberOfElements) {
       throw new IllegalArgumentException(
           "Color-array must contain exactly "
-              + eye.numberOfElements
+              + EYE.numberOfElements
               + " entries. Specified "
               + colours.length);
     } else {
-      eye.setEyeColours(colours);
+      EYE.setEyeColours(colours);
     }
   }
 
@@ -250,7 +262,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public Color getEyeBackground() {
-    return eye.getBackground();
+    return EYE.getBackground();
   }
 
   /**
@@ -262,7 +274,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setEyeBackground(@NotNull Color backgroundColor) {
-    eye.setBackground(backgroundColor);
+    EYE.setBackground(backgroundColor);
   }
 
   /**
@@ -275,7 +287,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void drawOval(boolean useOval) {
-    eye.ovalShaped = useOval;
+    EYE.ovalShaped = useOval;
   }
 
   /**
@@ -284,7 +296,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void toggleShape() {
-    eye.ovalShaped = !eye.ovalShaped;
+    EYE.ovalShaped = !EYE.ovalShaped;
   }
 
   /**
@@ -294,7 +306,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public boolean isShapeOval() {
-    return eye.ovalShaped;
+    return EYE.ovalShaped;
   }
 
   /**
@@ -315,7 +327,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void useGradient(boolean useGradient) {
-    eye.useGradients = useGradient;
+    EYE.useGradients = useGradient;
   }
 
   /**
@@ -325,7 +337,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void toggleGradient() {
-    eye.useGradients = !eye.useGradients;
+    EYE.useGradients = !EYE.useGradients;
   }
 
   /**
@@ -336,7 +348,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public boolean isGradientActive() {
-    return eye.useGradients;
+    return EYE.useGradients;
   }
 
   /**
@@ -356,7 +368,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void useDivider(boolean useDivider) {
-    eye.useDivider = useDivider;
+    EYE.useDivider = useDivider;
   }
 
   /**
@@ -366,7 +378,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void toggleDivider() {
-    eye.useDivider = !eye.useDivider;
+    EYE.useDivider = !EYE.useDivider;
   }
 
   /**
@@ -377,7 +389,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public boolean isDividerActive() {
-    return eye.useDivider;
+    return EYE.useDivider;
   }
 
   /**
@@ -393,7 +405,7 @@ public class LarsonScanner extends JPanel {
    *             being or almost being solid in colour.
    *         <li>When the eye leaves the left side, the illusion of the eye emerging is created by
    *             drawing the left most element of the elements already drawn from 0 to the width of
-   *             the eye. As the eye leaves the start, the starting element increases in alpha, thus
+   *             the eye. As the eye leaves the play, the starting element increases in alpha, thus
    *             creating the illusion of the eye emerging from one spot.
    *         <li>When the eye enters the right side, the illusion of the elements gathering is
    *             created by drawing the brightest, most solid in colour, element at the absolute
@@ -418,7 +430,7 @@ public class LarsonScanner extends JPanel {
    * @param useCylonAnimation {@link Boolean} <code>true</code> to use the Cylon animation.
    */
   public void useCylonAnimation(boolean useCylonAnimation) {
-    eye.cylonAnimation = useCylonAnimation;
+    EYE.cylonAnimation = useCylonAnimation;
   }
 
   /**
@@ -428,7 +440,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void toggleCylonAnimation() {
-    eye.cylonAnimation = !eye.cylonAnimation;
+    EYE.cylonAnimation = !EYE.cylonAnimation;
   }
 
   /**
@@ -439,7 +451,7 @@ public class LarsonScanner extends JPanel {
    * @return {@link Boolean} <code>true</code> if the eye is being animated as a Cylon-eye.
    */
   public boolean isCylonAnimation() {
-    return eye.cylonAnimation;
+    return EYE.cylonAnimation;
   }
 
   /**
@@ -457,7 +469,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void forceAspectRatio(boolean force) {
-    eye.forceAspectRatio = force;
+    EYE.forceAspectRatio = force;
   }
 
   /**
@@ -467,7 +479,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void toggleAspectRatio() {
-    eye.forceAspectRatio = !eye.forceAspectRatio;
+    EYE.forceAspectRatio = !EYE.forceAspectRatio;
   }
 
   /**
@@ -478,7 +490,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public boolean isAspectRatioForced() {
-    return eye.forceAspectRatio;
+    return EYE.forceAspectRatio;
   }
 
   /**
@@ -525,8 +537,8 @@ public class LarsonScanner extends JPanel {
               + fractionTwo);
 
     } else {
-      eye.fractions[0] = fractionOne;
-      eye.fractions[1] = fractionTwo;
+      EYE.fractions[0] = fractionOne;
+      EYE.fractions[1] = fractionTwo;
     }
   }
 
@@ -538,7 +550,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public float[] getFractions() {
-    return eye.fractions;
+    return EYE.fractions;
   }
 
   /**
@@ -550,7 +562,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public short[] getAlphas() {
-    return eye.alphas;
+    return EYE.alphas;
   }
 
   /**
@@ -585,14 +597,14 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setAlphas(short @NotNull [] alphas) throws IllegalArgumentException {
-    if (alphas.length != eye.numberOfElements) {
+    if (alphas.length != EYE.numberOfElements) {
       throw new IllegalArgumentException(
           "Alpha-array must contain exactly "
-              + eye.numberOfElements
+              + EYE.numberOfElements
               + " entries. Specified "
               + alphas.length);
     } else {
-      eye.alphas = alphas;
+      EYE.alphas = alphas;
     }
   }
 
@@ -604,7 +616,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public short getInterval() {
-    return eye.interval;
+    return EYE.interval;
   }
 
   /**
@@ -622,8 +634,8 @@ public class LarsonScanner extends JPanel {
       throw new IllegalArgumentException(
           "Interval must be greater than 0. Specified " + updateInterval);
     } else {
-      eye.interval = updateInterval;
-      eye.timer.setDelay(updateInterval);
+      EYE.interval = updateInterval;
+      // eye.timer.setDelay(updateInterval);
     }
   }
 
@@ -636,7 +648,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public short getDivider() {
-    return eye.divider;
+    return EYE.divider;
   }
 
   /**
@@ -654,7 +666,7 @@ public class LarsonScanner extends JPanel {
       throw new IllegalArgumentException(
           "Divider must be greater than 0. Specified " + newStepDivider);
     } else {
-      eye.divider = newStepDivider;
+      EYE.divider = newStepDivider;
     }
   }
 
@@ -665,7 +677,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public float getGapPercent() {
-    return eye.gapPercent;
+    return EYE.gapPercent;
   }
 
   /**
@@ -683,8 +695,8 @@ public class LarsonScanner extends JPanel {
       throw new IllegalArgumentException(
           "Gap percent must be a positive, non-negative, number. Specified " + percentile);
     } else {
-      eye.gapPercent = percentile;
-      eye.setNewEyeValues();
+      EYE.gapPercent = percentile;
+      EYE.setNewEyeValues();
     }
   }
 
@@ -695,7 +707,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public double getPartitionDivider() {
-    return eye.partitionDivider;
+    return EYE.partitionDivider;
   }
 
   /**
@@ -713,27 +725,27 @@ public class LarsonScanner extends JPanel {
       throw new IllegalArgumentException(
           "Partition Divider must be bigger than 0.0D. Specified " + partitionDivider);
     } else {
-      eye.partitionDivider = partitionDivider;
-      eye.setNewEyeValues();
+      EYE.partitionDivider = partitionDivider;
+      EYE.setNewEyeValues();
     }
   }
 
   /**
-   * Stop the eye, freezing the animation.
+   * Pause the eye, freezing the animation.
    *
    * @author Griefed
    */
-  public void stop() {
-    eye.timer.stop();
+  public void pause() {
+    EYE.pauseAnimation();
   }
 
   /**
-   * Start/unpause the eye, continuing the animation.
+   * Unpause the eye, continuing the animation.
    *
    * @author Griefed
    */
-  public void start() {
-    eye.timer.start();
+  public void play() {
+    EYE.playAnimation();
   }
 
   /**
@@ -743,7 +755,7 @@ public class LarsonScanner extends JPanel {
    *     stopped.
    */
   public boolean isRunning() {
-    return eye.timer.isRunning();
+    return EYE.isRunning();
   }
 
   /**
@@ -751,12 +763,8 @@ public class LarsonScanner extends JPanel {
    *
    * @author Griefed
    */
-  public void toggleOnOff() {
-    if (eye.timer.isRunning()) {
-      eye.timer.stop();
-    } else {
-      eye.timer.start();
-    }
+  public void togglePauseUnpause() {
+    EYE.togglePauseUnpause();
   }
 
   /**
@@ -767,7 +775,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public int getQualitySetting() {
-    return eye.lastSetRenderingQuality;
+    return EYE.lastSetRenderingQuality;
   }
 
   /**
@@ -791,7 +799,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setQualityHigh() {
-    eye.setRenderingQualityHigh();
+    EYE.setRenderingQualityHigh();
   }
 
   /**
@@ -815,7 +823,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setQualityMedium() {
-    eye.setRenderingQualityMedium();
+    EYE.setRenderingQualityMedium();
   }
 
   /**
@@ -839,7 +847,7 @@ public class LarsonScanner extends JPanel {
    * @author Griefed
    */
   public void setQualityLow() {
-    eye.setRenderingQualityLow();
+    EYE.setRenderingQualityLow();
   }
 
   /**
@@ -874,7 +882,7 @@ public class LarsonScanner extends JPanel {
     useDivider(config.useDivider);
     useCylonAnimation(config.cylonAnimation);
     setBackground(config.scannerBackgroundColour);
-    eye.setBackground(config.eyeBackgroundColour);
+    EYE.setBackground(config.eyeBackgroundColour);
   }
 
   /**
@@ -899,7 +907,7 @@ public class LarsonScanner extends JPanel {
     useDivider(true);
     useCylonAnimation(true);
     setBackground(DEFAULT_BACKGROUND_COLOUR);
-    eye.setBackground(DEFAULT_BACKGROUND_COLOUR);
+    EYE.setBackground(DEFAULT_BACKGROUND_COLOUR);
   }
 
   /**
@@ -910,22 +918,22 @@ public class LarsonScanner extends JPanel {
    */
   public ScannerConfig getCurrentConfig() {
     return new ScannerConfig(
-        eye.lastSetRenderingQuality,
-        eye.alphas,
-        eye.interval,
-        eye.divider,
-        eye.numberOfElements,
-        eye.fractions,
-        eye.gapPercent,
-        eye.partitionDivider,
-        eye.forceAspectRatio,
-        eye.ovalShaped,
-        eye.useGradients,
-        eye.useDivider,
-        eye.cylonAnimation,
-        eye.eyeColours,
+        EYE.lastSetRenderingQuality,
+        EYE.alphas,
+        EYE.interval,
+        EYE.divider,
+        EYE.numberOfElements,
+        EYE.fractions,
+        EYE.gapPercent,
+        EYE.partitionDivider,
+        EYE.forceAspectRatio,
+        EYE.ovalShaped,
+        EYE.useGradients,
+        EYE.useDivider,
+        EYE.cylonAnimation,
+        EYE.eyeColours,
         this.getBackground(),
-        eye.getBackground());
+        EYE.getBackground());
   }
 
   /**
@@ -1475,13 +1483,13 @@ public class LarsonScanner extends JPanel {
    *
    * @author Griefed
    */
-  private class Eye extends JComponent {
+  private class Eye extends JComponent implements Runnable {
 
     private final RenderingHints renderingHints =
         new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-    private final Timer timer;
+    // private final Timer timer;
     private final float[] fractions = {0.4f, 1.0f};
-    private BufferedImage eyeImage;
+    private volatile boolean paused = true;
     private Color[] eyeColours = {
       DEFAULT_EYE_COLOUR,
       DEFAULT_EYE_COLOUR,
@@ -1522,14 +1530,6 @@ public class LarsonScanner extends JPanel {
       setDoubleBuffered(true);
       setBackground(DEFAULT_BACKGROUND_COLOUR);
       setRenderingQualityLow();
-
-      timer =
-          new Timer(
-              interval,
-              e -> {
-                updatePosition();
-                repaint();
-              });
     }
 
     /**
@@ -1545,14 +1545,6 @@ public class LarsonScanner extends JPanel {
       setDoubleBuffered(true);
       setBackground(DEFAULT_BACKGROUND_COLOUR);
       setRenderingQualityLow();
-
-      timer =
-          new Timer(
-              interval,
-              e -> {
-                updatePosition();
-                repaint();
-              });
     }
 
     /**
@@ -1569,14 +1561,6 @@ public class LarsonScanner extends JPanel {
       setDoubleBuffered(true);
       setBackground(backgroundColor);
       setRenderingQualityLow();
-
-      timer =
-          new Timer(
-              interval,
-              e -> {
-                updatePosition();
-                repaint();
-              });
     }
 
     /**
@@ -1595,14 +1579,135 @@ public class LarsonScanner extends JPanel {
       setEyeColour(eyeColor);
       setBackground(backgroundColor);
       setRenderingQualityLow();
+    }
 
-      timer =
-          new Timer(
-              interval,
-              e -> {
-                updatePosition();
-                repaint();
-              });
+    /**
+     * Animate the eye! This method gets called after the thread is created in the constructor of
+     * the parent {@link LarsonScanner} and started from there.
+     *
+     * <p>By setting <code>paused</code> to either true or false you can pause or unpause the
+     * animation respectively.
+     *
+     * <p>If the animation is not paused, the position of the eye gets updated by calling {@link
+     * #updatePosition()} and then the eye gets drawn.
+     *
+     * @author Griefed
+     */
+    @Override
+    public void run() {
+      //noinspection InfiniteLoopStatement
+      while (true) {
+        try {
+          //noinspection BusyWait
+          Thread.sleep(EYE.interval);
+
+          if (paused) {
+            synchronized (this) {
+              while (paused) wait();
+            }
+          }
+        } catch (InterruptedException ignored) {
+        }
+        EYE.updatePosition();
+        EYE.repaint();
+      }
+    }
+
+    /**
+     * Draw the eye! Depending on whether oval shape is selected or gradients are to be used, the
+     * eye is drawn in different ways. However, all draw calls come from here. I guess you could say
+     * that this is the heart and soul of the eye itself. The eyeball, mayhaps? For details on how
+     * each animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
+     *
+     * @param g the <code>Graphics</code> object to protect
+     * @author Griefed
+     */
+    @Override
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+
+      updateValues();
+
+      Graphics2D g2d = (Graphics2D) g;
+      g2d.setRenderingHints(renderingHints);
+
+      byte startY = 0;
+
+      g2d.setColor(this.getBackground());
+      g2d.fillRect(0, 0, (int) width, (int) height);
+      //g2d.drawRect(0, 0, (int) width, (int) height);
+
+      if (ovalShaped) {
+
+        if (cylonAnimation) {
+
+          drawCylonOval(g2d, startY);
+
+        } else {
+
+          drawKittOval(g2d, startY);
+        }
+
+      } else {
+
+        if (cylonAnimation) {
+
+          drawCylonRect(g2d, startY);
+
+        } else {
+
+          drawKittRect(g2d, startY);
+        }
+      }
+      g2d.drawRect(0, 0, (int) width, (int) height);
+      Toolkit.getDefaultToolkit().sync();
+    }
+
+    /**
+     * Pause the animation of the eye.
+     *
+     * @author Griefed
+     */
+    private synchronized void pauseAnimation() {
+      paused = true;
+    }
+
+    /**
+     * Continue the animation of the eye.
+     *
+     * @author Griefed
+     */
+    private synchronized void playAnimation() {
+      paused = false;
+      notify();
+    }
+
+    /**
+     * Toggle the current state of the animation.
+     *
+     * <p>If the animation is paused, then invoking this will unpause it.
+     *
+     * <p>If the animation is not paused, then invoking this will pause it.
+     *
+     * @author Griefed
+     */
+    private synchronized void togglePauseUnpause() {
+      paused = !paused;
+
+      if (!paused) {
+        notify();
+      }
+    }
+
+    /**
+     * Get the current status of the animation, whether it is paused or not.
+     *
+     * @return {@link Boolean} Status of the animation. <code>true</code> if it is paused, false
+     *     otherwise.
+     * @author Griefed
+     */
+    private synchronized boolean isRunning() {
+      return paused;
     }
 
     /**
@@ -1611,7 +1716,7 @@ public class LarsonScanner extends JPanel {
      * @author Griefed
      */
     private void setRenderingQualityHigh() {
-      this.lastSetRenderingQuality = 2;
+      lastSetRenderingQuality = 2;
       renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
       renderingHints.put(
@@ -1632,7 +1737,7 @@ public class LarsonScanner extends JPanel {
      * @author Griefed
      */
     private void setRenderingQualityMedium() {
-      this.lastSetRenderingQuality = 1;
+      lastSetRenderingQuality = 1;
       renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
 
       renderingHints.put(
@@ -1654,7 +1759,7 @@ public class LarsonScanner extends JPanel {
      * @author Griefed
      */
     private void setRenderingQualityLow() {
-      this.lastSetRenderingQuality = 0;
+      lastSetRenderingQuality = 0;
       renderingHints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 
       renderingHints.put(
@@ -1690,7 +1795,7 @@ public class LarsonScanner extends JPanel {
       for (int i = 0; i < numberOfElements; i++) {
         newColours[i] = color;
       }
-      eye.eyeColours = newColours;
+      eyeColours = newColours;
     }
 
     /**
@@ -1767,60 +1872,12 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Draw the eye! Depending on whether oval shape is selected or gradients are to be used, the
-     * eye is drawn in different ways. However, all draw calls come from here. I guess you could say
-     * that this is the heart and soul of the eye itself. The eyeball, mayhaps? For details on how
-     * each animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
-     *
-     * @param g the <code>Graphics</code> object to protect
-     * @author Griefed
-     */
-    @Override
-    protected void paintComponent(Graphics g) {
-
-      super.paintComponent(g);
-      Graphics2D g2d = (Graphics2D) g;
-      g2d.setRenderingHints(renderingHints);
-
-      if (updateValues() || eyeImage == null) {
-
-        eyeImage = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
-        g2d = (Graphics2D) eyeImage.getGraphics();
-      }
-
-      byte startY = 0;
-
-      g2d.setColor(this.getBackground());
-      g2d.fillRect(0, 0, (int) width, (int) height);
-      g2d.drawRect(0, 0, (int) width, (int) height);
-
-      if (ovalShaped) {
-
-        if (cylonAnimation) {
-          drawCylonOval(g2d, startY);
-        } else {
-          drawKittOval(g2d, startY);
-        }
-
-      } else {
-
-        if (cylonAnimation) {
-          drawCylonRect(g2d, startY);
-        } else {
-          drawKittRect(g2d, startY);
-        }
-      }
-      g2d.drawRect(0, 0, (int) width, (int) height);
-      Toolkit.getDefaultToolkit().sync();
-    }
-
-    /**
      * Draw our elements in oval shape. If <code>useGradient</code> is set, then gradients are used
      * for painting, otherwise our ovals are painted with solid colours. For details on how this
      * animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
      *
      * @param g2d {@link Graphics2D} to fill and draw with.
-     * @param startY {@link Byte} The start of an element along the Y-axis.
+     * @param startY {@link Byte} The play of an element along the Y-axis.
      * @author Griefed
      */
     private void drawCylonOval(@NotNull Graphics2D g2d, byte startY) {
@@ -1843,10 +1900,10 @@ public class LarsonScanner extends JPanel {
     /**
      * Calculate the Y-coordinate of the center of the element currently being drawn.
      *
-     * <p>Divide the width of an element by two and add that to the start of the current element
+     * <p>Divide the width of an element by two and add that to the play of the current element
      * being drawn.
      *
-     * @param start {@link Double} The start point of the element currently being drawn.
+     * @param start {@link Double} The play point of the element currently being drawn.
      * @return {@link Double} The Y-coordinate of the center of the element currently being drawn.
      * @author Griefed
      */
@@ -1855,7 +1912,7 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Calculate the start of an element in oval shape. Steps are:
+     * Calculate the play of an element in oval shape. Steps are:
      *
      * <ul>
      *   <li>Multiply the width of one element with the number of elements in the eye. Divide by two
@@ -1867,7 +1924,7 @@ public class LarsonScanner extends JPanel {
      *
      * <p>The element width multiplied with the number of elements, then divided by two, gives the
      * half of the total width of the eye itself. Added to that the width of one element, multiplied
-     * with the number of the current element being drawn in the eye, and we get the start of the
+     * with the number of the current element being drawn in the eye, and we get the play of the
      * eye we are currently drawing. To put this into relation along the width of the whole Larson
      * Scanner, we need to subtract that value from the current position along the Larson Scanners
      * total width.
@@ -1910,7 +1967,7 @@ public class LarsonScanner extends JPanel {
      * how this animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
      *
      * @param g2d {@link Graphics2D} to fill and draw with.
-     * @param startY {@link Byte} The start of an element along the Y-axis.
+     * @param startY {@link Byte} The play of an element along the Y-axis.
      * @author Griefed
      */
     private void drawCylonRect(@NotNull Graphics2D g2d, byte startY) {
@@ -1944,7 +2001,7 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Calculate the start of an element in rectangular shape. Steps are:
+     * Calculate the play of an element in rectangular shape. Steps are:
      *
      * <ul>
      *   <li><strong>Calculate the width of a gap:</strong>
@@ -2076,7 +2133,7 @@ public class LarsonScanner extends JPanel {
      * animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
      *
      * @param g2d {@link Graphics2D} to fill and draw with.
-     * @param startY {@link Byte} The start of an element along the Y-axis.
+     * @param startY {@link Byte} The play of an element along the Y-axis.
      * @author Griefed
      */
     private void drawKittOval(@NotNull Graphics2D g2d, byte startY) {
@@ -2151,14 +2208,16 @@ public class LarsonScanner extends JPanel {
 
         } else if (p > width) {
           /*
-           * We are leaving the nether on the right side, so we need to draw that the next element
+           * We are leaving the nether on the right side, so we need to draw the next element
            * after the ones already visible to create the illusion of the eye emerging.
            */
           startOfElement = width - elementWidth;
           elementToDraw =
               (byte) (numberOfElements - ((width - drawnElementsWidth) / elementWidth) - 1);
 
-          drawKittOval(g2d, startY, startOfElement, elementToDraw);
+          if (elementToDraw < numberOfElements) {
+            drawKittOval(g2d, startY, startOfElement, elementToDraw);
+          }
         }
       }
     }
@@ -2167,8 +2226,8 @@ public class LarsonScanner extends JPanel {
      * Helper method to slightly cleanup {@link #drawKittOval(Graphics2D, byte)}.
      *
      * @param g2d {@link Graphics2D} to fill and draw with.
-     * @param startY {@link Byte} The start of an element along the Y-axis.
-     * @param startOfElement {@link Double} The start of the current element along the Larson
+     * @param startY {@link Byte} The play of an element along the Y-axis.
+     * @param startOfElement {@link Double} The play of the current element along the Larson
      *     Scanner.
      * @param element {@link Byte} The element we are currently drawing.
      * @author Griefed
@@ -2185,7 +2244,7 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Calculate the start of an element in oval shape when animating in Kitt-style and moving from
+     * Calculate the play of an element in oval shape when animating in Kitt-style and moving from
      * left to right, or right to left, depending on the direction.
      *
      * <p><strong>left to right:</strong>
@@ -2253,7 +2312,7 @@ public class LarsonScanner extends JPanel {
      * how this animation behaves, see {@link LarsonScanner#useCylonAnimation(boolean)}.
      *
      * @param g2d {@link Graphics2D} to fill and draw with.
-     * @param startY {@link Byte} The start of an element along the Y-axis.
+     * @param startY {@link Byte} The play of an element along the Y-axis.
      * @author Griefed
      */
     private void drawKittRect(@NotNull Graphics2D g2d, byte startY) {
@@ -2345,8 +2404,8 @@ public class LarsonScanner extends JPanel {
     }
 
     /**
-     * Calculate the start of a Kitt-style animated rectangle. When the element we are drawing is
-     * the very first element, the start of said rectangle is simply the current position along the
+     * Calculate the play of a Kitt-style animated rectangle. When the element we are drawing is
+     * the very first element, the play of said rectangle is simply the current position along the
      * X-axis. Otherwise, when we are scrolling
      *
      * <p><strong>left to right</strong>
@@ -2500,6 +2559,21 @@ public class LarsonScanner extends JPanel {
      * @author Griefed
      */
     private void updatePositionCylonStyle() {
+      if (p < 0) {
+        // switch to left to right
+
+        increasePosition = true;
+        p = 0;
+        return;
+
+      } else if (p > width) {
+        // switch to right to left
+
+        increasePosition = false;
+        p = (short) width;
+        return;
+      }
+
       if (useDivider) {
 
         if (increasePosition && p < width) {
@@ -2512,17 +2586,6 @@ public class LarsonScanner extends JPanel {
 
           p -= width / divider;
 
-        } else if (p <= 0) {
-          // switch to left to right
-
-          increasePosition = true;
-          p = 0;
-
-        } else {
-          // switch to right to left
-
-          increasePosition = false;
-          p = (short) width;
         }
 
       } else {
@@ -2537,17 +2600,6 @@ public class LarsonScanner extends JPanel {
 
           p--;
 
-        } else if (p <= 0) {
-          // switch to left to right
-
-          increasePosition = true;
-          p = 0;
-
-        } else {
-          // switch to right to left
-
-          increasePosition = false;
-          p = (short) width;
         }
       }
     }
@@ -2567,6 +2619,21 @@ public class LarsonScanner extends JPanel {
       double maxWidth = width + widthElements;
       double maxNegative = 0 - widthElements;
 
+      if (p < maxNegative) {
+        // switch to left to right
+
+        increasePosition = true;
+        p = (short) maxNegative;
+        return;
+
+      } else if (p > maxWidth) {
+        // switch to right to left
+
+        increasePosition = false;
+        p = (short) maxWidth;
+        return;
+      }
+
       if (useDivider) {
 
         if (increasePosition && p < maxWidth) {
@@ -2579,17 +2646,6 @@ public class LarsonScanner extends JPanel {
 
           p -= maxWidth / divider;
 
-        } else if (p <= maxNegative) {
-          // switch to left to right
-
-          increasePosition = true;
-          p = (short) maxNegative;
-
-        } else {
-          // switch to right to left
-
-          increasePosition = false;
-          p = (short) maxWidth;
         }
 
       } else {
@@ -2604,17 +2660,6 @@ public class LarsonScanner extends JPanel {
 
           p--;
 
-        } else if (p <= maxNegative) {
-          // switch to left to right
-
-          increasePosition = true;
-          p = (short) maxNegative;
-
-        } else {
-          // switch to right to left
-
-          increasePosition = false;
-          p = (short) maxWidth;
         }
       }
     }
