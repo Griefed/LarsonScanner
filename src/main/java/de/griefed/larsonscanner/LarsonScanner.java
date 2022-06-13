@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -341,7 +342,8 @@ public class LarsonScanner extends JPanel {
   /**
    * Whether to use a divider to in-/decrement across the width of the Larson Scanner. If the
    * divider is being used, then the position of the eye will be updated with the result of the
-   * width of the Scanner divided by the divider.
+   * width of the Scanner divided by the divider. Meaning: Smaller values increase the speed of the
+   * eye whilst bigger values decrease it.
    *
    * <p>Increment: next position = current position + width of the Scanner / divider
    *
@@ -446,6 +448,9 @@ public class LarsonScanner extends JPanel {
    * aspect ratio is being enforced by de-/increasing the height of the eye in the scanner to the
    * width of one element, resulting in a nice and sexy 1:1 ratio.
    *
+   * <p>If you plan on using different scanner and eye background colours, you should make use of
+   * this setting, otherwise the eye background colour will also prevail.
+   *
    * <p>Default setting: <code>false</code>
    *
    * @param force {@link Boolean}
@@ -472,7 +477,7 @@ public class LarsonScanner extends JPanel {
    * @return {@link Boolean} <code>true</code> if the aspect ratio is being enforced.
    * @author Griefed
    */
-  public boolean isAspectRationForced() {
+  public boolean isAspectRatioForced() {
     return eye.forceAspectRatio;
   }
 
@@ -551,7 +556,14 @@ public class LarsonScanner extends JPanel {
   /**
    * Set the alpha values for the elements in the eye, one for each element. The array must contain
    * exactly as many entries as there are number of elements currently being drawn in the eye.
-   * Depending on the currently set shape, these alpha values are used in different ways:
+   *
+   * <p><Strong>Note:</Strong>
+   *
+   * <p>Alpha values are reset / automatically set / calculated when you change the number of
+   * elements in your configuration. So, if you plan on using custom alpha values and a custom
+   * amount of elements, make sure to update your alphas after changing the number of elements!
+   *
+   * <p>Depending on the currently set shape, these alpha values are used in different ways:
    *
    * <ul>
    *   <li>Oval: Radial gradients are generated, one for each element in the eye. The alpha is
@@ -672,6 +684,7 @@ public class LarsonScanner extends JPanel {
           "Gap percent must be a positive, non-negative, number. Specified " + percentile);
     } else {
       eye.gapPercent = percentile;
+      eye.setNewEyeValues();
     }
   }
 
@@ -688,8 +701,8 @@ public class LarsonScanner extends JPanel {
   /**
    * The partition divider controls the width of the eye in the Larson Scanner. The total width of
    * the available area is divided by this value, and the resulting value is the total width of the
-   * eye in which all elements will be drawn. The smaller the value, the bigger the eye itself and
-   * the other way around.
+   * eye in which all elements will be drawn. The smaller the value, the bigger the eye and the
+   * other way around.
    *
    * @param partitionDivider {@link Double} The new partition divider to set for the eye.
    * @throws IllegalArgumentException if the specified divider is smaller than or equal to 0.0D.
@@ -744,6 +757,17 @@ public class LarsonScanner extends JPanel {
     } else {
       eye.timer.start();
     }
+  }
+
+  /**
+   * Get the integer indicating the last set rendering quality. See {@link #setQualityLow()}, {@link
+   * #setQualityMedium()} and {@link #setQualityHigh()} for more information.
+   *
+   * @return {@link Integer} Number representation of the last set rendering quality.
+   * @author Griefed
+   */
+  public int getQualitySetting() {
+    return eye.lastSetRenderingQuality;
   }
 
   /**
@@ -961,9 +985,9 @@ public class LarsonScanner extends JPanel {
      *     array must equal number of elements in the eye. For more information, see {@link
      *     LarsonScanner#setAlphas(short[])}.
      * @param intervalInMillis {@link Short} The interval in milliseconds at which to update and
-     *     redraw the eye. For more information, see {@link #setInterval(short)}.
+     *     redraw the eye. For more information, see {@link LarsonScanner#setInterval(short)}.
      * @param divider {@link Short} The divider with which to in-/decrement the position of the eye.
-     *     For more information, see {@link #useGradient(boolean)}.
+     *     For more information, see {@link LarsonScanner#useGradient(boolean)}.
      * @param numberOfElements {@link Byte} The number of elements to draw in the eye. For more
      *     information, see {@link LarsonScanner#setNumberOfElements(byte)}.
      * @param fractions {@link Float}-array of fractions to use for radial gradient colour
@@ -1019,6 +1043,7 @@ public class LarsonScanner extends JPanel {
       this.setDivider(divider);
       this.setGapPercent(gapPercent);
       this.setPartitionDivider(partitionDivider);
+      this.setFractions(fractions[0], fractions[1]);
 
       this.forceAspectRatio = forceAspectRatio;
       this.ovalShaped = ovalShaped;
@@ -1267,7 +1292,7 @@ public class LarsonScanner extends JPanel {
      * @return {@link Boolean} Whether the aspect ratio is enforced in this configuration.
      * @author Griefed
      */
-    public boolean isForceAspectRatio() {
+    public boolean isAspectRatioForced() {
       return forceAspectRatio;
     }
 
@@ -1289,7 +1314,7 @@ public class LarsonScanner extends JPanel {
      * @return {@link Boolean} Whether elements are drawn as ovals or rectangles.
      * @author Griefed
      */
-    public boolean isOvalShaped() {
+    public boolean isShapeOval() {
       return ovalShaped;
     }
 
@@ -1310,7 +1335,7 @@ public class LarsonScanner extends JPanel {
      * @return {@link Boolean} Whether elements are drawn using gradients.
      * @author Griefed
      */
-    public boolean isUseGradients() {
+    public boolean isGradientActive() {
       return useGradients;
     }
 
@@ -1332,7 +1357,7 @@ public class LarsonScanner extends JPanel {
      * @return {@link Boolean} Whether the position in-/decrements using a divider.
      * @author Griefed
      */
-    public boolean isUseDivider() {
+    public boolean isDividerActive() {
       return useDivider;
     }
 
@@ -1785,6 +1810,8 @@ public class LarsonScanner extends JPanel {
           drawKittRect(g2d, startY);
         }
       }
+      g2d.drawRect(0, 0, (int) width, (int) height);
+      Toolkit.getDefaultToolkit().sync();
     }
 
     /**
@@ -1810,7 +1837,6 @@ public class LarsonScanner extends JPanel {
         }
 
         g2d.fillOval((int) startOfElement, startY, (int) elementWidth, (int) height);
-        g2d.drawOval((int) startOfElement, startY, (int) elementWidth, (int) height);
       }
     }
 
@@ -1914,7 +1940,6 @@ public class LarsonScanner extends JPanel {
         }
 
         g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
-        g2d.drawRect((int) startOfElement, startY, (int) elementWidth, (int) height);
       }
     }
 
@@ -2088,7 +2113,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[numberOfElements - 1]);
           }
           g2d.fillOval((int) startOfElement, startY, (int) elementWidth, (int) height);
-          g2d.drawOval((int) startOfElement, startY, (int) elementWidth, (int) height);
 
         } else if (p < 0) {
           /*
@@ -2104,7 +2128,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[elementToDraw]);
           }
           g2d.fillOval(0, startY, (int) elementWidth, (int) height);
-          g2d.drawOval(0, startY, (int) elementWidth, (int) height);
         }
 
       } else {
@@ -2125,7 +2148,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[numberOfElements - 1]);
           }
           g2d.fillOval(0, startY, (int) elementWidth, (int) height);
-          g2d.drawOval(0, startY, (int) elementWidth, (int) height);
 
         } else if (p > width) {
           /*
@@ -2160,7 +2182,6 @@ public class LarsonScanner extends JPanel {
       }
 
       g2d.fillOval((int) startOfElement, startY, (int) elementWidth, (int) height);
-      g2d.drawOval((int) startOfElement, startY, (int) elementWidth, (int) height);
     }
 
     /**
@@ -2255,7 +2276,6 @@ public class LarsonScanner extends JPanel {
         }
 
         g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
-        g2d.drawRect((int) startOfElement, startY, (int) elementWidth, (int) height);
       }
 
       if (increasePosition) {
@@ -2272,7 +2292,6 @@ public class LarsonScanner extends JPanel {
           g2d.setColor(eyeColours[numberOfElements - 1]);
 
           g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
-          g2d.drawRect((int) startOfElement, startY, (int) elementWidth, (int) height);
 
         } else if (p < 0) {
           /*
@@ -2287,7 +2306,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[elementToDraw]);
           }
           g2d.fillRect(0, startY, (int) elementWidth, (int) height);
-          g2d.drawRect(0, startY, (int) elementWidth, (int) height);
         }
 
       } else {
@@ -2306,7 +2324,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[numberOfElements - 1]);
           }
           g2d.fillRect(0, startY, (int) elementWidth, (int) height);
-          g2d.drawRect(0, startY, (int) elementWidth, (int) height);
 
         } else if (p > width) {
           /*
@@ -2323,7 +2340,6 @@ public class LarsonScanner extends JPanel {
             g2d.setColor(eyeColours[elementToDraw]);
           }
           g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
-          g2d.drawRect((int) startOfElement, startY, (int) elementWidth, (int) height);
         }
       }
     }
