@@ -102,7 +102,7 @@ public class LarsonScanner extends JPanel {
 
   /**
    * Convenience constructor allowing you to specify the interval at which the position changes. For
-   * more information regarding possible settings, see {@link LarsonScanner()}.
+   * more information regarding possible settings, see {@link #LarsonScanner()}.
    *
    * @param updateInterval {@link Short} Interval in milliseconds at which to scroll.
    * @author Griefed
@@ -123,7 +123,7 @@ public class LarsonScanner extends JPanel {
   /**
    * Convenience constructor allowing you to specify the interval at which the position changes, as
    * well as the background colours for the scanner and the eye. For more information regarding
-   * possible settings, see {@link LarsonScanner()}.
+   * possible settings, see {@link #LarsonScanner()}.
    *
    * @param interval {@link Short} Interval in milliseconds at which to scroll.
    * @param backgroundColor {@link Color} The background colour for the scanner and the eye.
@@ -145,7 +145,7 @@ public class LarsonScanner extends JPanel {
   /**
    * Convenience constructor allowing you to specify the interval at which the position changes, the
    * background colours for the scanner and the eye, and the color of the eye. For more information
-   * regarding possible settings, see {@link LarsonScanner()}.
+   * regarding possible settings, see {@link #LarsonScanner()}.
    *
    * @param interval {@link Short} Interval in milliseconds at which to scroll.
    * @param backgroundColor {@link Color} The background colour for the scanner and the eye.
