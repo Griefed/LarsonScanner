@@ -1679,7 +1679,7 @@ public class LarsonScanner extends JPanel {
           drawKittRect(g2d, startY);
         }
       }
-      g2d.drawRect(0, 0, (int) width, (int) height);
+      g2d.drawRect(-10, -10, (int) width+20, (int) height+20);
       Toolkit.getDefaultToolkit().sync();
     }
 
