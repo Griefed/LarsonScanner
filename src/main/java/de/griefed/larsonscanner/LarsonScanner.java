@@ -2376,12 +2376,14 @@ public class LarsonScanner extends JPanel {
            */
           elementToDraw = (byte) (numberOfElements - (drawnElementsWidth / elementWidth) - 1);
 
-          if (useGradients) {
-            g2d.setPaint(kittRectGradient(elementToDraw, getCenter(0)));
-          } else {
-            g2d.setColor(eyeColours[elementToDraw]);
+          if (elementToDraw < numberOfElements) {
+            if (useGradients) {
+              g2d.setPaint(kittRectGradient(elementToDraw, getCenter(0)));
+            } else {
+              g2d.setColor(eyeColours[elementToDraw]);
+            }
+            g2d.fillRect(0, startY, (int) elementWidth, (int) height);
           }
-          g2d.fillRect(0, startY, (int) elementWidth, (int) height);
         }
 
       } else {
@@ -2410,12 +2412,14 @@ public class LarsonScanner extends JPanel {
           elementToDraw =
               (byte) (numberOfElements - ((width - drawnElementsWidth) / elementWidth) - 1);
 
-          if (useGradients) {
-            g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
-          } else {
-            g2d.setColor(eyeColours[elementToDraw]);
+          if (elementToDraw < numberOfElements) {
+            if (useGradients) {
+              g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
+            } else {
+              g2d.setColor(eyeColours[elementToDraw]);
+            }
+            g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
           }
-          g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
         }
       }
     }
