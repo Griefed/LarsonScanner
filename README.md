@@ -65,8 +65,8 @@ LarsonScanner larsonScanner = new LarsonScanner();
 
 JFrame frame = new JFrame();
 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-frame.setPreferredSize(new Dimension(width, 182));
-frame.setSize(new Dimension(width, 182));
+frame.setPreferredSize(new Dimension(512, 512));
+frame.setSize(new Dimension(512, 512));
 frame.add(larsonScanner);
 frame.setLocationRelativeTo(null);
 frame.pack();
