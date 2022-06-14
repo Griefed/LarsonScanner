@@ -29,12 +29,14 @@ This Larson Scanner lets you customize just about everything though! To get an i
 
 ![default](misc/default.gif)
 ![default_rectangle](misc/default_rectangle.gif)
+![kitt_oval](misc/kitt_oval.gif)
+![kitt_rectangle](misc/kitt_rectangle.gif)
 
 ---
 
 # Implementation
 
-`$VERSION` is the version of LarsonScanner you want to use in you project.
+`$VERSION` is the version of LarsonScanner you want to use in your project. The most recent version as of me writing this is `1.0.0`. More information can be found at [Sonatype Maven](https://search.maven.org/artifact/de.griefed/larsonscanner)
 
 LarsonScanner was written using Java 8.
 
@@ -63,8 +65,8 @@ LarsonScanner larsonScanner = new LarsonScanner();
 
 JFrame frame = new JFrame();
 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-frame.setPreferredSize(new Dimension(width, 182));
-frame.setSize(new Dimension(width, 182));
+frame.setPreferredSize(new Dimension(512, 512));
+frame.setSize(new Dimension(512, 512));
 frame.add(larsonScanner);
 frame.setLocationRelativeTo(null);
 frame.pack();
@@ -192,11 +194,13 @@ will be drawn using a solid colour.
 
 ![gradient_rectangle](misc/gradient_rectangle.gif)
 
-## Use divider (default true)
+## Use divider
 
 Whether to use a divider to in-/decrement across the width of the Larson Scanner. If the divider is
 being used, then the position of the eye will be updated with the result of the width of the Scanner
 divided by the divider.
+
+### false (default true)
 
 ![use_divider](misc/use_divider.gif)
 
