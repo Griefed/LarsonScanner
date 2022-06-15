@@ -2156,22 +2156,22 @@ public class LarsonScanner extends JPanel {
     private void drawKittOval(@NotNull Graphics2D g2d, byte startY) {
 
       double startOfElement;
-      double drawnElementsWidth;
+      double posDrawn;
       byte elementToDraw;
 
       for (byte element = 0; element < numberOfElements; element++) {
 
         startOfElement = calcKittOvalStart(element);
 
-        drawKittOval(g2d, startY, startOfElement, element);
+        addKittOval(g2d, startY, startOfElement, element);
       }
 
       if (increasePosition) {
         // Going left to right
 
-        drawnElementsWidth = p + numberOfElements * elementWidth;
+        posDrawn = p + numberOfElements * elementWidth;
 
-        if (drawnElementsWidth > width) {
+        if (posDrawn > width) {
           /*
            * We are entering the nether on the right side, so we draw the brightest element at the
            * most right position to create the illusion of the elements gathering.
@@ -2193,7 +2193,7 @@ public class LarsonScanner extends JPanel {
            * We are leaving the nether on the left side, so we need to draw that the next element
            * after the ones already visible to create the illusion of the eye emerging.
            */
-          elementToDraw = (byte) (numberOfElements - (drawnElementsWidth / elementWidth) - 1);
+          elementToDraw = (byte) (numberOfElements - (posDrawn / elementWidth) - 1);
 
           if (useGradients) {
             g2d.setPaint(
@@ -2207,9 +2207,9 @@ public class LarsonScanner extends JPanel {
       } else {
         // Going right to left
 
-        drawnElementsWidth = p - numberOfElements * elementWidth;
+        posDrawn = p - numberOfElements * elementWidth;
 
-        if (drawnElementsWidth < 0) {
+        if (posDrawn <= 0) {
           /*
            * We are entering the nether on the left side, so we draw the brightest element at the
            * most left position to create the illusion of the elements gathering.
@@ -2223,17 +2223,20 @@ public class LarsonScanner extends JPanel {
           }
           g2d.fillOval(0, startY, (int) elementWidth, (int) height);
 
-        } else if (p > width) {
+        } else if (p >= width) {
           /*
            * We are leaving the nether on the right side, so we need to draw the next element
            * after the ones already visible to create the illusion of the eye emerging.
            */
           startOfElement = width - elementWidth;
-          elementToDraw =
-              (byte) (numberOfElements - ((width - drawnElementsWidth) / elementWidth) - 1);
+          elementToDraw = (byte) ((p - width) / elementWidth);
+
+          if (elementToDraw >= numberOfElements) {
+            elementToDraw = (byte) (numberOfElements - 1);
+          }
 
           if (elementToDraw < numberOfElements) {
-            drawKittOval(g2d, startY, startOfElement, elementToDraw);
+            addKittOval(g2d, startY, startOfElement, elementToDraw);
           }
         }
       }
@@ -2249,7 +2252,7 @@ public class LarsonScanner extends JPanel {
      * @param element {@link Byte} The element we are currently drawing.
      * @author Griefed
      */
-    private void drawKittOval(
+    private void addKittOval(
         @NotNull Graphics2D g2d, byte startY, double startOfElement, byte element) {
       if (useGradients) {
         g2d.setPaint(kittRadialGradient(element, getCenter(startOfElement), eyeColours[element]));
@@ -2335,7 +2338,7 @@ public class LarsonScanner extends JPanel {
     private void drawKittRect(@NotNull Graphics2D g2d, byte startY) {
 
       double startOfElement;
-      double drawnElementsWidth;
+      double posDrawn;
       byte elementToDraw;
 
       for (byte element = 0; element < numberOfElements; element++) {
@@ -2357,9 +2360,9 @@ public class LarsonScanner extends JPanel {
       if (increasePosition) {
         // Going left to right
 
-        drawnElementsWidth = p + numberOfElements * elementWidth;
+        posDrawn = p + numberOfElements * elementWidth + ((numberOfElements - 2) * gapWidth);
 
-        if (drawnElementsWidth > width) {
+        if (posDrawn > width) {
           /*
            * We are entering the nether on the right side, so we draw the brightest element at the
            * most right position to create the illusion of the elements gathering.
@@ -2374,7 +2377,7 @@ public class LarsonScanner extends JPanel {
            * We are leaving the nether on the left side, so we need to draw that the next element
            * after the ones already visible to create the illusion of the eye emerging.
            */
-          elementToDraw = (byte) (numberOfElements - (drawnElementsWidth / elementWidth) - 1);
+          elementToDraw = (byte) (numberOfElements - (posDrawn / elementWidth) - 1);
 
           if (elementToDraw < numberOfElements) {
             if (useGradients) {
@@ -2389,9 +2392,9 @@ public class LarsonScanner extends JPanel {
       } else {
         // Going right to left
 
-        drawnElementsWidth = p - numberOfElements * elementWidth;
+        posDrawn = p - numberOfElements * elementWidth + ((numberOfElements - 2) * gapWidth);
 
-        if (drawnElementsWidth < 0) {
+        if (posDrawn <= 0) {
           /*
            * We are entering the nether on the left side, so we draw the brightest element at the
            * most left position to create the illusion of the elements gathering.
@@ -2403,23 +2406,24 @@ public class LarsonScanner extends JPanel {
           }
           g2d.fillRect(0, startY, (int) elementWidth, (int) height);
 
-        } else if (p > width) {
+        } else if (p >= width) {
           /*
            * We are leaving the nether on the right side, so we need to draw that the next element
            * after the ones already visible to create the illusion of the eye emerging.
            */
           startOfElement = width - elementWidth;
-          elementToDraw =
-              (byte) (numberOfElements - ((width - drawnElementsWidth) / elementWidth) - 1);
+          elementToDraw = (byte) ((p - width) / elementWidth);
 
-          if (elementToDraw < numberOfElements) {
-            if (useGradients) {
-              g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
-            } else {
-              g2d.setColor(eyeColours[elementToDraw]);
-            }
-            g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
+          if (elementToDraw >= numberOfElements) {
+            elementToDraw = (byte) (numberOfElements - 1);
           }
+          if (useGradients) {
+            g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
+          } else {
+            g2d.setColor(eyeColours[elementToDraw]);
+          }
+          g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
+
         }
       }
     }
