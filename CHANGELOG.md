@@ -1,3 +1,10 @@
+### [1.0.3](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.2...1.0.3) (2022-06-15)
+
+
+### 🛠 Fixes
+
+* **Kitt rectangles:** Fix Kitt rectangles not drawing correctly when entering or leaving the left or right side ([8043277](https://git.griefed.de/Griefed/LarsonScanner/commit/8043277d05fef3d31f2366808447fe05a8523650))
+
 ### [1.0.2](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.1...1.0.2) (2022-06-14)
 
 
