@@ -151,5 +151,10 @@ public class LarsonScannerTests {
     Assertions.assertTrue(larsonScanner.isGradientActive());
     Assertions.assertTrue(larsonScanner.isDividerActive());
     Assertions.assertTrue(larsonScanner.isCylonAnimation());
+
+    //TODO set config tests
+    //TODO get config tests
+    //TODO set scanner tests
+    //TODO get scanner tests
   }
 }
