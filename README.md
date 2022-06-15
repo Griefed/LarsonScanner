@@ -36,7 +36,7 @@ This Larson Scanner lets you customize just about everything though! To get an i
 
 # Implementation
 
-`$VERSION` is the version of LarsonScanner you want to use in your project. The most recent version as of me writing this is `1.0.0`. More information can be found at [Sonatype Maven](https://search.maven.org/artifact/de.griefed/larsonscanner)
+`$VERSION` is the version of LarsonScanner you want to use in your project. The most recent version as of me writing this is `1.0.2`. More information can be found at [Sonatype Maven](https://search.maven.org/artifact/de.griefed/larsonscanner)
 
 LarsonScanner was written using Java 8.
 
