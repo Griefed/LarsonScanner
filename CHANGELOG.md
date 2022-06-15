@@ -1,3 +1,10 @@
+### [1.0.2](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.1...1.0.2) (2022-06-14)
+
+
+### 🛠 Fixes
+
+* **Surprise border painting:** Prevent suprise border painting occuring on top and left borders when animating as rectangular Kitt with gradients....that was a surprising one for sure...The fix feels dirty, though. I f you happen to find a better solution, please help. ([60a75be](https://git.griefed.de/Griefed/LarsonScanner/commit/60a75bea6f7b4c15f211d8e7a45170a3e7e3fbad))
+
 ### [1.0.1](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.0...1.0.1) (2022-06-14)
 
 
