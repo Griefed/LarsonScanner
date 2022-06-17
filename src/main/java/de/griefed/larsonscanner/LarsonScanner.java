@@ -2379,7 +2379,7 @@ public class LarsonScanner extends JPanel {
            */
           elementToDraw = (byte) (numberOfElements - (posDrawn / elementWidth) - 1);
 
-          if (elementToDraw < numberOfElements) {
+          if (elementToDraw >= 0 && elementToDraw < numberOfElements) {
             if (useGradients) {
               g2d.setPaint(kittRectGradient(elementToDraw, getCenter(0)));
             } else {
@@ -2417,10 +2417,13 @@ public class LarsonScanner extends JPanel {
           if (elementToDraw >= numberOfElements) {
             elementToDraw = (byte) (numberOfElements - 1);
           }
-          if (useGradients) {
-            g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
-          } else {
-            g2d.setColor(eyeColours[elementToDraw]);
+
+          if (elementToDraw >= 0) {
+            if (useGradients) {
+              g2d.setPaint(kittRectGradient(elementToDraw, getCenter(startOfElement)));
+            } else {
+              g2d.setColor(eyeColours[elementToDraw]);
+            }
           }
           g2d.fillRect((int) startOfElement, startY, (int) elementWidth, (int) height);
 
