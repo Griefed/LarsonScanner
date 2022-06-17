@@ -1,3 +1,10 @@
+### [1.0.4](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.3...1.0.4) (2022-06-17)
+
+
+### 🛠 Fixes
+
+* **IndexOutOfBounds:** Prevent IndexOutOfBounds exception when animating as Kitt gradient rectangles ([f11d8bf](https://git.griefed.de/Griefed/LarsonScanner/commit/f11d8bf75fdead55c64c7171d2047991118d24d4))
+
 ### [1.0.3](https://git.griefed.de/Griefed/LarsonScanner/compare/1.0.2...1.0.3) (2022-06-15)
 
 
