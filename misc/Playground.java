@@ -1,3 +1,28 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2022 Griefed
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
 import de.griefed.larsonscanner.LarsonScanner.ScannerConfig;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -32,14 +57,11 @@ public class Playground {
           alphasButton.addActionListener(
               e -> {
                 String[] alphaValues = alphasField.getText().split(",");
-                larsonScanner.setAlphas(
-                    new short[] {
-                        new Short(alphaValues[0]),
-                        new Short(alphaValues[1]),
-                        new Short(alphaValues[2]),
-                        new Short(alphaValues[3]),
-                        new Short(alphaValues[4])
-                    });
+                short[] alphas = new short[alphaValues.length];
+                for (int i = 0; i < alphaValues.length; i++) {
+                  alphas[i] = Short.parseShort(alphaValues[i]);
+                }
+                larsonScanner.setAlphas(alphas);
               });
           alphaPanel.add(alphasLabel);
           alphaPanel.add(alphasField);
